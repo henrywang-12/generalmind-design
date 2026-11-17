@@ -4,17 +4,6 @@ A Claude skill that makes whatever Claude produces look and read like [GeneralMi
 
 Unofficial. Not affiliated with or endorsed by GeneralMind. See [Disclaimer](#disclaimer).
 
-![Landing page built with the skill](docs/landing.jpg)
-
-| Dashboard | Customer POV (A4) |
-|---|---|
-| ![Dashboard](docs/dashboard.jpg) | ![Customer POV](docs/pov.jpg) |
-
-| Deck | Post image |
-|---|---|
-| ![Deck](docs/deck.jpg) | ![Cover](docs/cover.jpg) |
-
-Everything above is generated from the templates in this repo, with made-up content for a fictional company.
 
 ## Install
 

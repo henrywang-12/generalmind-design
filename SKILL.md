@@ -17,10 +17,11 @@ If a result feels busy, colourful, bold or clever, it is off-brand. Remove thing
 
 ## Workflow
 
+0. **Know who is speaking.** If `brand.local/brand.md` exists in this skill folder, read it now: it names the company everything is made for by default and holds its logo. If the work is for or about a customer, read `references/cobranding.md` and fetch their logo with `python3 scripts/logo.py "<Customer>" [their-domain]`.
 1. **Pick the format** from the table below and open its template and the references listed for it. Templates are working files, not inspiration: start from them.
 2. **Use the tokens, never invent values.** Every colour, size, radius and spacing you need is in `assets/gm.css` (and explained in `references/foundations.md`). If you are about to type a hex code or a pixel size that is not in there, stop and find the token. This is about the system's values: colours, type roles, weights, radii and section spacing. Writing layout CSS (a grid, a width, a phone layout) is ordinary work. And inside a drawing - a UI fragment on a viewport, a cover diagram, a slide or A4 canvas - sizes scale with the canvas, as the templates do; keep the proportions, colours, weights and radii.
 3. **Write the copy in the house voice** before polishing layout - `references/voice.md`. The voice is half of the likeness; correct styling around hype copy still reads as fake.
-4. **Build it.** Write your HTML with `<link rel="stylesheet" href="gm.css">` (plus `<script src="gm.js"></script>` on marketing pages; dashboards, decks and one-pagers do not need it), then run `python3 scripts/inline.py in.html out.html`. It finds both files in this skill's `assets/` folder wherever your file lives and writes one file. The only thing still fetched is the Geist font from Google Fonts; offline it falls back to Helvetica or Arial.
+4. **Build it.** Put a wordmark or `<span data-gm-logo></span>` wherever the sender's logo belongs and `<img class="gm-clogo" src="customer.svg">` for a customer's. Write your HTML with `<link rel="stylesheet" href="gm.css">` (plus `<script src="gm.js"></script>` on marketing pages; dashboards, decks and one-pagers do not need it), then run `python3 scripts/inline.py in.html out.html`. It finds both files in this skill's `assets/` folder wherever your file lives, swaps in the real logo from the private brand, embeds local images, and writes one file. The only thing still fetched is the Geist font from Google Fonts; offline it falls back to Helvetica or Arial.
 5. **Look at it.** Render with `scripts/shoot.sh file.html out.png 1440 full` (the whole page; `out.pdf` instead gives a PDF for decks and one-pagers) and read the image. Compare against the checklist at the end of this file. Do not hand over something you have not seen.
 6. **Lint it.** `python3 scripts/gm_lint.py file.html` catches off-palette colours, wrong fonts, bold headings, stray gradients, emoji, exclamation marks and hype words. Fix every error; read every warning. It reads markup and CSS; copy that a script builds at runtime is not checked, so read that yourself.
 7. **Deliver**, and state plainly what is placeholder (logos, photos, numbers you were not given).
@@ -38,6 +39,7 @@ If a result feels busy, colourful, bold or clever, it is off-brand. Remove thing
 | Blog article, long-form post | `assets/templates/article.html` | `voice.md`, `formats.md` |
 | LinkedIn or social post, post image, cover | `assets/templates/cover.html` (square), `cover-landscape.html` | `voice.md`, `formats.md`, `imagery.md` |
 | Chart, diagram, table of numbers | chart in `dashboard.html`, diagram in `landing.html` | `imagery.md`, `dashboard.md` |
+| Anything for or about a customer (POV, value report, their dashboard, deck) | lockup in `pov.html` and `deck.html`, chip in `dashboard.html` | `cobranding.md` |
 | PowerPoint, Word, PDF, email, Figma, images | - | `formats.md` (translation tables) |
 
 All references live in `references/`. `foundations.md` is the full token table; open it whenever you need an exact value.
@@ -79,7 +81,7 @@ product UI (Geist 12px)  text #262626 / #525252 / #A1A1A1   surface #FFFFFF on #
 
 ## Brand, logo and fonts
 
-- **Name and logo.** This skill carries the design language, not GeneralMind's trademarks. The templates use a placeholder name ("Northdesk") and a neutral mark. If the user is producing work *for* GeneralMind, set the wordmark text to GeneralMind and use the official logo file they give you. Otherwise use the user's own name in the wordmark. Do not redraw or trace the GeneralMind logo, and do not produce anything that presents itself as an official GeneralMind communication (their name, people, contact details, customers) for someone who is not working with them.
+- **Name and logo.** The published skill carries the design language, not GeneralMind's trademarks: the templates use sample names ("Northdesk", "Elbstrom", "Stadtwerke Lahn") and a neutral mark. Who you actually write for comes from the private brand folder `brand.local/` (not in the repo): when it exists, its company is the sender of everything by default and `scripts/inline.py` puts its real logo in. Without it, use the company the user names; if they name none, ask once. Sample names never stay in a deliverable (the lint fails on them). Do not redraw or trace the GeneralMind logo, and do not produce anything that presents itself as an official GeneralMind communication (their name, people, contact details, customers) for someone who is not working with them.
 - **Typeface.** Die Grotesk is a commercial typeface from Klim Type Foundry. `gm.css` names it first, so it is used automatically when installed, and falls back to Geist (free, loaded from Google Fonts). Do not download or embed Die Grotesk font files from anywhere. When the real font is in use, set `--gm-track-display: -0.01em`.
 - **Wordmark.** Use the user's logo if they give you one. Otherwise set their name as text in the wordmark style; the small neutral mark from the templates may stay or go.
 - **Real names in public.** Before a real customer is named in anything public (a post, a case study, a logo wall), tell the user it needs that customer's consent.
@@ -113,8 +115,11 @@ references/dashboard.md     product UI and its showcase rendition
 references/motion.md        what moves, how far, how long
 references/voice.md         how the copy is written, with patterns per format
 references/formats.md       recipe per deliverable, and PPTX / DOCX / email / image translations
+references/cobranding.md    your logo and the customer's: finding it, sizes, where each goes
+brand.local/                private, not in the repo: your company, your logo, saved customer logos
 scripts/shoot.sh            render HTML to PNG or PDF (headless Chrome); `full` measures the page height
 scripts/gm_lint.py          off-brand detector
-scripts/inline.py           bundle gm.css + gm.js into one self-contained HTML file
+scripts/inline.py           one self-contained file: CSS, JS, your logo and local images embedded
+scripts/logo.py             find a company's logo (saved files, brand source, their website)
 scripts/viewport.py         generate the steel viewport background as a PNG, any size
 ```

@@ -206,6 +206,35 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .gm-wordmark__mark { width: 16px; height: 16px; border-radius: 4px; background: currentColor; position: relative; }
 .gm-wordmark__mark::after { content: ""; position: absolute; right: -3px; top: 5px; width: 6px; height: 6px; border-radius: 2px; background: var(--gm-paper); }
 
+/* brand logo. scripts/inline.py fills this from brand.local/ (private, not in the repo).
+   Both versions are embedded; the background decides which one shows. */
+.gm-logo { display: inline-flex; align-items: center; line-height: 1; vertical-align: middle; color: var(--gm-ink); }
+.gm-logo svg { display: block; height: 0.92em; width: auto; overflow: visible; flex: none; } /* visible: a tight viewBox must never shave the letters */
+.gm-logo .gm-logo__white { display: none; height: 1.24em; }
+.gm-footer .gm-logo__dark, .gm-slide--night .gm-logo__dark, .gm-viewport .gm-logo__dark, .gm-stage .gm-logo__dark { display: none; }
+.gm-footer .gm-logo__white, .gm-slide--night .gm-logo__white, .gm-viewport .gm-logo__white, .gm-stage .gm-logo__white { display: block; }
+.gm-float .gm-logo__dark, .gm-app .gm-logo__dark, .gm-logo[data-gm-logo="dark"] .gm-logo__dark { display: block; }
+.gm-float .gm-logo__white, .gm-app .gm-logo__white, .gm-logo[data-gm-logo="dark"] .gm-logo__white { display: none; }
+.gm-logo[data-gm-logo="white"] .gm-logo__dark { display: none; }
+.gm-logo[data-gm-logo="white"] .gm-logo__white { display: block; }
+
+/* a customer's logo: always their own file, in full colour, on white, sized by height.
+   53px under a case-study title, 44px in a logo row, 32px on a card (default), 20px inline. */
+.gm-clogo { display: block; height: 32px; width: auto; max-width: 100%; object-fit: contain; }
+.gm-clogo--lg { height: 53px; }
+.gm-clogo--md { height: 44px; }
+.gm-clogo--sm { height: 20px; }
+/* until you have the file: the customer's name as text, in the same slot */
+.gm-clogo-text { display: inline-block; font-size: 24px; line-height: 32px; font-weight: 500; letter-spacing: -0.03em; color: var(--gm-ink); }
+/* on steel or night a colour logo sits on a white tile; never recolour it */
+.gm-clogo-tile { display: inline-flex; align-items: center; justify-content: center; background: #fff; border-radius: var(--gm-r-sm); padding: 8px 12px; }
+/* lockup: us x them */
+.gm-lockup { display: inline-flex; align-items: center; gap: 0.65em; font-size: 22px; line-height: 1; }
+.gm-lockup__x { font-size: 0.8em; color: var(--gm-ink-3); }
+.gm-lockup .gm-clogo { height: 1.35em; }
+.gm-lockup .gm-clogo-text { font-size: 1em; line-height: 1; }
+.gm-slide--night .gm-lockup__x, .gm-viewport .gm-lockup__x { color: rgba(255, 255, 255, 0.7); }
+
 .gm-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: 40px; padding: 8px 24px; border: 0; border-radius: var(--gm-r-pill);
@@ -418,9 +447,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
   font-family: var(--gm-font-ui); font-size: var(--app-fs); line-height: 16px; font-weight: 500;
 }
 .gm-app__side { background: var(--app-surface); border-right: 1px solid var(--app-line-soft); display: flex; flex-direction: column; padding: 12px 16px; gap: 4px; }
-.gm-app__brand { display: flex; align-items: center; gap: 8px; height: 32px; margin-bottom: 12px; font-size: 14px; line-height: 20px; font-weight: 600; }
+.gm-app__brand { display: flex; align-items: center; gap: 8px; min-height: 32px; margin-bottom: 12px; font-size: 14px; line-height: 20px; font-weight: 600; }
+.gm-app__brand .gm-logo { font-size: 20px; }
 .gm-app__group { display: flex; align-items: center; gap: 8px; height: 32px; padding: 6px 12px; border-radius: var(--app-r); font-weight: 600; margin-top: 8px; }
-.gm-app__item { display: flex; align-items: center; height: 32px; padding: 0 12px 0 32px; border-radius: var(--app-r); color: var(--app-text-2); cursor: pointer; transition: background-color 0.15s; }
+.gm-app__item { display: flex; align-items: center; min-height: 32px; padding: 8px 12px 8px 32px; border-radius: var(--app-r); color: var(--app-text-2); cursor: pointer; transition: background-color 0.15s; } /* a long label wraps and the row grows: never cut text */
 .gm-app__item:hover { background: var(--app-bg); }
 .gm-app__item.is-active { background: var(--app-line-soft); color: var(--app-text); font-weight: 600; }
 .gm-app__item.is-off { color: var(--app-text-3); }
@@ -447,6 +477,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .gm-app__ctl--primary { background: var(--gm-blue-strong); border-color: transparent; color: #fafafa; font-weight: 600; }
 .gm-app__ctl--primary:hover { background: var(--gm-blue-hover); }
 .gm-app__spacer { flex: 1; }
+/* whose data this is: the customer's logo and name in the top bar */
+.gm-app__customer { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 4px 12px 4px 6px; border: 1px solid var(--app-line); border-radius: var(--app-r); background: var(--app-surface); color: var(--app-text); font-weight: 600; }
+.gm-app__customer .gm-clogo { height: 18px; max-width: 80px; }
+.gm-app__customer .gm-clogo-text { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0; }
 .gm-app__tablewrap { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 8px; overflow: auto; }
 .gm-app table { width: 100%; border-collapse: collapse; }
 .gm-app thead th { height: var(--app-row); padding: 0 16px; background: var(--app-bg); text-align: left; font-size: 12px; line-height: 15px; font-weight: 600; text-transform: uppercase; color: var(--app-text-2); white-space: nowrap; }
@@ -471,7 +505,11 @@ button, input, textarea, select { font: inherit; color: inherit; }
 /* narrow screens: the sidebar gives way, KPIs go two-up, tabs scroll sideways */
 @media (max-width: 900px) {
   .gm-app:not(.gm-app--showcase) { grid-template-columns: minmax(0, 1fr); }
-  .gm-app:not(.gm-app--showcase) .gm-app__side { display: none; }
+  /* the sidebar folds into a strip that still shows whose product this is */
+  .gm-app:not(.gm-app--showcase) .gm-app__side { flex-direction: row; align-items: center; padding: 10px 16px; border-right: 0; border-bottom: 1px solid var(--app-line); }
+  .gm-app:not(.gm-app--showcase) .gm-app__side > :not(.gm-app__brand) { display: none; }
+  .gm-app:not(.gm-app--showcase) .gm-app__brand { margin-bottom: 0; }
+  .gm-app:not(.gm-app--showcase) { min-height: 0; }
   .gm-app__bar { padding: 0 16px; }
   .gm-app__body { padding: 0 16px 16px; }
   .gm-app__tabs { margin: 0 -16px; padding: 0 16px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
@@ -487,7 +525,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 .gm-app--showcase .gm-app__side { align-items: center; padding: 20px 0; gap: 20px; border-right: 1px solid var(--gm-line); background: var(--gm-mist); }
 .gm-app--showcase .gm-app__brand { width: 56px; height: 56px; border-radius: 8px; background: var(--gm-steel); color: #fff; justify-content: center; font-size: 18px; font-weight: 400; margin: 0 0 8px; }
-.gm-app--showcase .gm-app__item { flex-direction: column; height: auto; padding: 6px 0; width: 100%; gap: 6px; border-radius: 0; color: var(--gm-ink-4); border-right: 2px solid transparent; }
+.gm-app--showcase .gm-app__item { flex-direction: column; min-height: 0; height: auto; padding: 6px 0; width: 100%; gap: 6px; border-radius: 0; color: var(--gm-ink-4); border-right: 2px solid transparent; }
 .gm-app--showcase .gm-app__item.is-active { background: none; color: var(--gm-ink); border-right-color: var(--gm-ink); font-weight: 500; }
 .gm-app--showcase .gm-app__item svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 .gm-app--showcase .gm-app__bar { height: auto; padding: 28px 28px 8px; border: 0; align-items: flex-start; }
@@ -526,6 +564,12 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .gm-slide--split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 64px; }
 .gm-slide--split > .gm-slide__text { display: flex; flex-direction: column; min-width: 0; }
 .gm-slide--split .gm-slide__title { font-size: 48px; line-height: 52px; }
+/* title and closing slides: who is presenting (and to whom) sits top-left */
+.gm-slide__brand { display: flex; align-items: center; justify-content: space-between; font-size: 24px; min-height: 32px; }
+.gm-slide__brand .gm-wordmark { font-size: 1em; }
+.gm-slide--center > .gm-slide__brand { position: absolute; top: 64px; left: 72px; right: 72px; }
+.gm-slide__foot .gm-wordmark { font-size: 13px; color: inherit; gap: 6px; }
+.gm-slide__foot .gm-wordmark__mark { width: 10px; height: 10px; border-radius: 3px; }
 .gm-slide__foot { position: absolute; left: 72px; right: 72px; bottom: 28px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; line-height: 16px; color: var(--gm-ink-3); }
 .gm-slide .gm-stat b { font-size: 88px; line-height: 88px; }
 .gm-slide .gm-stat span { font-size: 18px; line-height: 26px; color: var(--gm-ink-2); max-width: 280px; }

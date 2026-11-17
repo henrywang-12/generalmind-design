@@ -41,6 +41,7 @@ Contents: Product layout · Product components · Status language · Numbers · 
 ## Product components
 
 - **Sidebar** (`.gm-app__side`): white, 200px. Brand row (mark + name, 14/600). Groups: a 16px stroke icon + 12/600 label. Items: 12/500, indented 32px, 32px tall, 6px radius; active = `#F1F5F9` background and 600; unavailable = `#A1A1A1`. User chip pinned to the bottom: 32px initials circle, name, 10px role line.
+- **Whose data** (`.gm-app__customer`): in a dashboard made for a customer, a chip in the top bar holds their logo at 18px (plus the name when the logo is only a symbol). Our own logo stays in the sidebar. See `cobranding.md`.
 - **Top bar** (`.gm-app__bar`): 56px, white, bottom hairline. Title on the left names the screen as "AI <task>" ("AI Meter Readings"): what the AI does here. Right: outlined 32px controls (scope switcher, language, help).
 - **Tabs** (`.gm-app__tabs`): 14px. Active tab is blue `#3781FF`, weight 600, 2px underline `#2173FF`. Each tab carries a count pill (18px, 10px text); the active one is blue-tinted.
 - **KPI cards** (`.gm-app__kpi`): deliberately small. White, hairline, 6px radius, 8px padding; the number 14/600 on top, the label 12px below. Four in a row, about 181px wide. They are counters, not hero tiles.

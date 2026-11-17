@@ -36,7 +36,7 @@ Full width (1200px) text at 18/28. H2s at 28/36. 56px between sections. Wording:
 
 One A4 page, portrait, 16mm margins. It must be readable in ninety seconds and survive being forwarded without you in the room.
 
-1. Top row: wordmark left; right, in 10px tracked caps: `POINT OF VIEW · PREPARED FOR <CUSTOMER> · <DATE>`
+1. Top row: the lockup left (our logo x the customer's logo, see `cobranding.md`); right, in 10px tracked caps: `POINT OF VIEW · PREPARED FOR <CUSTOMER> · <DATE>`. A value report uses `VALUE DELIVERED · …` and the same page.
 2. Eyebrow naming the process, then the title: the outcome with a time frame
 3. Lead: two sentences - their situation, your claim
 4. Meta strip: PROCESS · VOLUME · SYSTEMS · TEAM (their facts)
@@ -58,18 +58,20 @@ Never run to a second page; cut content instead. The template is already full, s
 
 1280×720 slides. Print to PDF for a file (one slide per page). Padding 64px top, 72px sides. Every slide: eyebrow (12px caps) → headline (56/60 regular, max ~940px wide) → one content block. Footer at 28px from the bottom: wordmark or name left, page number right, 12px grey.
 
+Every slide except the title carries the small logo in the footer, bottom-left.
+
 Slide types (all in the template):
 
 | Type | Background | Content |
 |---|---|---|
-| Title | white | quiet eyebrow top, 76px headline bottom-left, one line of context |
+| Title | white | logo (or the lockup `us x customer`) top-left and the date top-right; quiet eyebrow, 76px headline and one line of context bottom-left |
 | Statement | mist | eyebrow + one long headline, vertically centred, nothing else |
 | Points | white | headline + three hairline-separated lines, each numbered 01, 02, 03 in 12px grey |
 | Visual + text | white | headline and lead left (max 560px), a viewport with one UI fragment filling the right 45% |
 | Numbers | mist | headline top, three 88px stats along the bottom |
 | Flow | white | headline + three outlined step boxes joined by arrows, centred |
 | Quote | white | pale quote mark, 44/54 quote, person row |
-| Close | **night** | eyebrow, 76px headline, one lead, one white pill |
+| Close | **night** | white logo top-left; eyebrow, 76px headline, one lead, one white pill |
 
 Rules: one idea per slide; the headline is a full claim that makes sense alone; no bullet paragraphs; no more than three of anything; night only at the end; no slide transitions or builds; no clip-art, no stock photos, no icons beside bullets. A 10-slide deck has at most three viewport visuals.
 

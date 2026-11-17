@@ -66,9 +66,11 @@ references/dashboard.md     product UI and its showcase rendition
 references/motion.md        what moves, how far, how long
 references/voice.md         how the copy is written
 references/formats.md       recipe per deliverable; PPTX, DOCX, email and image translations
+references/cobranding.md    your logo and the customer's: finding it, sizes, where each goes
 scripts/shoot.sh            render HTML to PNG or PDF with headless Chrome
 scripts/gm_lint.py          flags off-palette colours, wrong fonts, bold headlines, emoji, hype words
-scripts/inline.py           bundle CSS and JS into one self-contained HTML file
+scripts/inline.py           one self-contained HTML file: CSS, JS, your logo and local images embedded
+scripts/logo.py             find a customer's logo (saved files, your own source, their website)
 scripts/viewport.py         generate the steel viewport background as a PNG
 ```
 
@@ -84,6 +86,21 @@ You can also use the stylesheet without Claude:
 ```bash
 python3 scripts/gm_lint.py your-page.html
 ```
+
+## Your own brand and your customers' logos
+
+The templates use a fictional company. To make everything come out as *your* company, add a private folder next to `SKILL.md`. It is git-ignored and never published:
+
+```
+brand.local/
+  brand.json     {"name": "Your Company", "logo": "logo.svg", "logo_white": "logo-white.svg",
+                  "customer_logo_url": "https://your-site.example/logos/customers/{slug}.svg"}
+  brand.md       notes for Claude: spelling of the name, product words, contact line
+  logo.svg       dark logo        logo-white.svg   white logo
+  customers/     saved customer logos
+```
+
+`scripts/inline.py` then replaces every wordmark with your real logo (dark or white, chosen by the background), and `scripts/logo.py "Customer" customer.com` fetches a customer's logo so a POV, deck or dashboard made for them shows both: `you x them`. Rules for sizes and placement: `references/cobranding.md`.
 
 ## The design language in ten lines
 

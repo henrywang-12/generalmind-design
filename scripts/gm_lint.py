@@ -18,6 +18,8 @@ import re
 import sys
 from pathlib import Path
 
+SKILL_ROOT = Path(__file__).resolve().parent.parent
+
 # --- the palette -------------------------------------------------------------
 PALETTE = {
     "ink": "030712", "ink-2": "374151", "ink-3": "6b7280", "ink-4": "9ca3af",
@@ -204,7 +206,7 @@ def visible_text(text: str) -> str:
     return text
 
 
-def lint_copy(rep, text, is_html):
+def lint_copy(rep, text, is_html, check_samples=True):
     body = visible_text(text) if is_html else text
     for m in EMOJI.finditer(body):
         rep.add("error", m.start(), "copy", f"emoji {m.group(0)!r}: none, anywhere")
@@ -217,6 +219,9 @@ def lint_copy(rep, text, is_html):
     for word in HYPE:
         for m in re.finditer(r"(?<![\w-])" + re.escape(word) + r"(?![\w-])", low):
             rep.add("warn", m.start(), "copy", f"hype word '{word}': say what it does, with a number")
+    if check_samples:
+        for m in re.finditer(r"northdesk(?:\.example)?|stadtwerke lahn|elbstrom|jana petrovic|your company", low):
+            rep.add("error", m.start(), "copy", f"template sample name '{body[m.start():m.end()]}' left in: use the real company, customer and people")
     if re.search(r"lorem ipsum", low):
         rep.add("error", low.index("lorem ipsum"), "copy", "placeholder text: write real, plausible content")
     for m in re.finditer(r"\b(?:[A-ZÄÖÜ]{2,}[,:]?\s+){3,}[A-ZÄÖÜ]{2,}\b", body):
@@ -229,7 +234,7 @@ def lint_copy(rep, text, is_html):
         small = {"a", "an", "and", "as", "at", "but", "by", "for", "in", "of", "on", "or", "the", "to", "vs", "vs.", "with", "x"}
         for m in re.finditer(r"<h([1-3])\b[^>]*>(.*?)</h\1>", text, flags=re.S | re.I):
             words_ = [w for w in htmllib.unescape(re.sub(r"<[^>]+>", " ", m.group(2))).split() if w.lower() not in small and w[0].isalpha()]
-            if len(words_) >= 4 and sum(w[0].isupper() for w in words_) / len(words_) > 0.8:
+            if len(words_) >= 5 and sum(w[0].isupper() for w in words_) / len(words_) > 0.8:
                 rep.add("warn", m.start(), "copy", f"Title Case headline “{' '.join(words_)[:48]}”: use sentence case")
         for m in re.finditer(r"fonts\.googleapis\.com/css2?\?([^\"')\s]+)", text):
             for fam in re.findall(r"family=([^:&]+)", m.group(1)):
@@ -244,6 +249,8 @@ def lint_file(path: Path, allow) -> Report:
     rep = Report(path, raw)
     text = mask_off(raw)
     suffix = path.suffix.lower()
+    # the skill's own templates and docs legitimately contain the sample names
+    own = SKILL_ROOT not in path.resolve().parents
     if suffix in (".html", ".htm", ".css", ".svg"):
         styled = re.sub(r"<script\b.*?</script>", blank, text, flags=re.S | re.I)
         for off, css in css_contexts(styled, suffix):
@@ -251,9 +258,9 @@ def lint_file(path: Path, allow) -> Report:
     if suffix in (".html", ".htm"):
         lint_scripts(rep, text, allow)
         text = re.sub(r"<script\b.*?</script>", blank, text, flags=re.S | re.I)
-        lint_copy(rep, text, True)
+        lint_copy(rep, text, True, own)
     elif suffix in (".md", ".txt", ""):
-        lint_copy(rep, text, False)
+        lint_copy(rep, text, False, own)
     return rep
 
 

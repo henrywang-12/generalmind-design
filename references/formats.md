@@ -52,7 +52,8 @@ Never run to a second page; cut content instead. The template is already full, s
 - **Facts and estimates.** A number the customer gave you stays plain (`~` in front if they said "about"). A number you worked out from their facts, or a target, ends its label with "(est.)" or "(target)". The footer line says which figures are theirs and what the estimates assume. Building the "What it costs" column from their volume and a stated assumption is fine; inventing their volume is not.
 - **The honest limit** goes in the callout's second sentence or in the footer line: what the pilot will not show.
 - **Date** in the top row: the day the page is sent.
-- **Export:** `scripts/shoot.sh pov.html pov.pdf` (A4 PDF) or `scripts/shoot.sh pov.html pov.png 900 full` for an image.
+- **Export:** `scripts/shoot.sh pov.html pov.pdf` (A4 PDF). It reports the page count and writes `pov-page-1.png` …: look at them, because the PDF is the thing that gets sent. `scripts/shoot.sh pov.html pov.png 900 full` gives an image of the screen layout.
+- **Several pages:** one `<article class="gm-sheet">` per page inside `.gm-sheets`, each with its own header row and a footer with the page number. Each page must fit by itself; content does not flow from one sheet to the next.
 
 ## Deck — `templates/deck.html`
 

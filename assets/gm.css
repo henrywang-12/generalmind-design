@@ -578,7 +578,19 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .gm-slide li.gm-point small { flex: none; width: 28px; font-size: 12px; line-height: 30px; color: var(--gm-ink-3); }
 /* sheet: an A4 one-pager (customer POV, brief, memo) */
 .gm-sheets { background: #e5e7eb; display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 24px 0; }
-.gm-sheet { width: 210mm; min-height: 297mm; flex: none; background: var(--gm-paper); padding: 16mm 16mm 14mm; display: flex; flex-direction: column; gap: 8mm; position: relative; overflow: hidden; }
+/* On screen the bottom padding is 6mm larger than in print. A page that fits on screen
+   therefore keeps 6mm in reserve for the slightly different text wrapping of a PDF. */
+.gm-sheet { width: 210mm; min-height: 297mm; flex: none; background: var(--gm-paper); padding: 16mm 16mm 20mm; display: flex; flex-direction: column; gap: 7mm; position: relative; overflow: hidden; }
+.gm-sheet > * { flex-shrink: 0; } /* nothing may be squeezed to make a page fit: too much content must show */
+/* Fixed canvases never respond to the window. Print evaluates media queries against a
+   narrower page than the sheet itself, so the wide layouts are pinned here. */
+.gm-sheet .gm-grid--2, .gm-slide .gm-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.gm-sheet .gm-grid--3, .gm-slide .gm-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.gm-sheet .gm-grid--4, .gm-slide .gm-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.gm-sheet .gm-metarow, .gm-slide .gm-metarow, .gm-sheet .gm-stats, .gm-slide .gm-stats { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none; }
+.gm-sheet .gm-cells--3, .gm-slide .gm-cells--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.gm-sheet .gm-cells--3 > *, .gm-slide .gm-cells--3 > * { border-right: 1px solid var(--gm-line); }
+.gm-sheet .gm-cells--3 > *:nth-child(3n), .gm-slide .gm-cells--3 > *:nth-child(3n) { border-right: 0; }
 /* on screen only: an amber line appears where A4 ends if the content has grown past one page */
 .gm-sheet::after { content: "A4 ends here: cut content until this line disappears"; position: absolute; left: 0; right: 0; top: 297mm; padding: 2px 16mm; border-top: 2px dashed var(--gm-amber); background: var(--gm-amber-tint); color: var(--gm-amber-deep); font-size: 11px; line-height: 16px; }
 .gm-sheet__top { display: flex; justify-content: space-between; align-items: center; }
@@ -607,7 +619,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
   .gm-deck, .gm-sheets { background: none; padding: 0; gap: 0; display: block; }
   .gm-slide:not(:last-child), .gm-sheet:not(:last-child) { break-after: page; page-break-after: always; }
   .gm-sheet::after { display: none; }
-  .gm-sheet { min-height: 0; height: 296mm; } /* a hair under A4 so rounding never adds a blank page */
+  .gm-sheet { min-height: 0; height: 296mm; padding-bottom: 14mm; } /* a hair under A4 so rounding never adds a blank page */
   .gm-nav { position: static; }
   .gm-reveal { opacity: 1 !important; transform: none !important; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }

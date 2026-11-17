@@ -119,8 +119,11 @@ def embed_images(html: str, base: Path):
         print(f"  warning: image not found, left as is: {src}", file=sys.stderr)
         return m.group(0)
 
-    html = re.sub(r'(<img\b[^>]*\bsrc=")([^"]+)(")', repl, html)
-    return html, count
+    # skip <img> examples that only appear inside HTML comments
+    parts = re.split(r"(<!--.*?-->)", html, flags=re.S)
+    for i in range(0, len(parts), 2):
+        parts[i] = re.sub(r'(<img\b[^>]*\bsrc=")([^"]+)(")', repl, parts[i])
+    return "".join(parts), count
 
 
 def main() -> int:

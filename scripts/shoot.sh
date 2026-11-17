@@ -10,7 +10,7 @@
 #   scripts/shoot.sh cover.html out.png 1200 1200   # square post image
 #   scripts/shoot.sh page.html out.png 500 full     # phone check (Chrome will not go narrower than ~500px)
 #   scripts/shoot.sh deck.html deck.pdf             # PDF, one slide per page (uses the file's @page size)
-#   scripts/shoot.sh pov.html pov.pdf               # PDF, A4
+#   scripts/shoot.sh pov.html pov.pdf               # PDF, A4; also writes pov-page-1.png ... to look at
 #   scripts/shoot.sh "demo.html?demo=1" out.png 1440 full   # query strings work for local files
 #
 # "full" works for local files. It also prints the measured page height, which
@@ -52,6 +52,30 @@ if [[ "$out_abs" == *.pdf ]]; then
   "$chrome" "${common[@]}" --no-pdf-header-footer --print-to-pdf-no-header \
     --print-to-pdf="$out_abs" "$url" >/dev/null 2>&1
   echo "$out_abs"
+  # A PDF is laid out again for print and can differ from the screen. Count its pages
+  # against the sheets or slides in the source, and write a picture of every page.
+  python3 - "$out_abs" "${local_file:-}" <<'PY' >&2
+import re, sys
+pdf, src = sys.argv[1], sys.argv[2]
+pages = len(re.findall(rb"/Type\s*/Page(?![a-zA-Z])", open(pdf, "rb").read()))
+msg = f"pdf pages: {pages}"
+if src:
+    html = open(src, encoding="utf-8", errors="replace").read()
+    canvases = sum(1 for m in re.finditer(r'class="([^"]*)"', html) if {"gm-sheet", "gm-slide"} & set(m.group(1).split()))
+    if canvases:
+        msg += f" (source has {canvases} sheet(s)/slide(s))"
+        if canvases != pages:
+            msg += "  <-- MISMATCH: content spilled onto an extra page or a page is missing"
+print(msg)
+PY
+  if command -v pdftoppm >/dev/null 2>&1; then
+    prefix="${out_abs%.pdf}-page"
+    rm -f "$prefix"-*.png
+    pdftoppm -r 80 -png "$out_abs" "$prefix" && ls "$prefix"-*.png >&2
+    echo "Read every page picture above. The HTML screenshot is not the PDF." >&2
+  else
+    echo "pdftoppm not found (brew install poppler): open the PDF and look at every page yourself. The HTML screenshot is not the PDF." >&2
+  fi
   exit 0
 fi
 

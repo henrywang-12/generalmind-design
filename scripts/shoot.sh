@@ -11,6 +11,7 @@
 #   scripts/shoot.sh page.html out.png 500 full     # phone check (Chrome will not go narrower than ~500px)
 #   scripts/shoot.sh deck.html deck.pdf             # PDF, one slide per page (uses the file's @page size)
 #   scripts/shoot.sh pov.html pov.pdf               # PDF, A4
+#   scripts/shoot.sh "demo.html?demo=1" out.png 1440 full   # query strings work for local files
 #
 # "full" works for local files. It also prints the measured page height, which
 # is how you notice a one-pager that has grown past one page.
@@ -35,12 +36,17 @@ done
 if [ -z "$chrome" ]; then echo "No Chrome/Chromium found. Open the file in a browser instead." >&2; exit 2; fi
 
 local_file=""
+query=""
 case "$src" in
-  http://*|https://*|file://*) url="$src" ;;
-  *) local_file="$(cd "$(dirname "$src")" && pwd)/$(basename "$src")"; url="file://$local_file" ;;
+  http://*|https://*) url="$src" ;;
+  *)
+    path="${src#file://}"
+    case "$path" in *\?*) query="?${path#*\?}"; path="${path%%\?*}" ;; esac
+    local_file="$(cd "$(dirname "$path")" && pwd)/$(basename "$path")"
+    url="file://$local_file$query" ;;
 esac
 out_abs="$(cd "$(dirname "$out")" && pwd)/$(basename "$out")"
-common=(--headless=new --disable-gpu --hide-scrollbars --force-prefers-reduced-motion --virtual-time-budget=5000)
+common=(--headless=new --disable-gpu --hide-scrollbars --force-prefers-reduced-motion --virtual-time-budget=8000)
 
 if [[ "$out_abs" == *.pdf ]]; then
   "$chrome" "${common[@]}" --no-pdf-header-footer --print-to-pdf-no-header \
@@ -57,12 +63,12 @@ if [ "$h" = "full" ]; then
 import sys
 src, dst = sys.argv[1], sys.argv[2]
 html = open(src, encoding="utf-8").read()
-probe = ("<script>window.addEventListener('load',function(){document.title='GMH:'+"
-         "Math.ceil(Math.max(document.documentElement.scrollHeight,document.body.scrollHeight));});</script>")
+probe = ("<script>window.addEventListener('load',function(){setTimeout(function(){document.title='GMH:'+"
+         "Math.ceil(Math.max(document.documentElement.scrollHeight,document.body.scrollHeight));},4500);});</script>")
 html = html.replace("</body>", probe + "</body>") if "</body>" in html else html + probe
 open(dst, "w", encoding="utf-8").write(html)
 PY
-  h="$("$chrome" "${common[@]}" --window-size="${w},900" --dump-dom "file://$tmp" 2>/dev/null \
+  h="$("$chrome" "${common[@]}" --window-size="${w},900" --dump-dom "file://$tmp$query" 2>/dev/null \
         | sed -n 's/.*<title>GMH:\([0-9][0-9]*\).*/\1/p' | head -1)"
   if [ -z "$h" ]; then echo "Could not measure the page; give a height in px." >&2; exit 2; fi
   if [ "$h" -gt 16000 ]; then h=16000; fi

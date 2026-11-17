@@ -57,13 +57,15 @@ references/voice.md         how the copy is written
 references/formats.md       recipe per deliverable; PPTX, DOCX, email and image translations
 references/cobranding.md    your logo and the customer's: finding it, sizes, where each goes
 scripts/shoot.sh            render HTML to PNG or PDF with headless Chrome
-scripts/gm_lint.py          flags off-palette colours, wrong fonts, bold headlines, emoji, hype words
+scripts/gm_check.py         the check before delivery: opens the file in a browser and fails on cut-off pages
+                            and slides, off-system fonts and colours, emoji and hype words, missing logos
+scripts/gm_lint.py          the source-only part of that check
 scripts/inline.py           one self-contained HTML file: CSS, JS, your logo and local images embedded
 scripts/logo.py             find a customer's logo (saved files, your own source, their website)
 scripts/viewport.py         generate the steel viewport background as a PNG
 ```
 
-The scripts need Python 3 (standard library only). `shoot.sh` needs Chrome, Chromium or Edge.
+The scripts need Python 3 (standard library only). `gm_check.py` and `shoot.sh` need Chrome, Chromium or Edge; PDF page previews need `pdftoppm` (poppler).
 
 You can also use the stylesheet without Claude:
 
@@ -73,7 +75,7 @@ You can also use the stylesheet without Claude:
 ```
 
 ```bash
-python3 scripts/gm_lint.py your-page.html
+python3 scripts/gm_check.py your-page.html
 ```
 
 ## Your own brand and your customers' logos

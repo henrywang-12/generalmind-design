@@ -43,6 +43,27 @@ PALETTE = {
     # small fixed parts
     "switch-off": "c3c3c3", "knob": "fcfcfd", "row-hover": "fcfdfe", "backdrop": "e5e7eb",
 }
+
+
+def load_palette():
+    """Every colour assets/gm.css uses, plus the product tokens listed above.
+    Add a colour to gm.css and the lint and the render check accept it."""
+    pal = dict(PALETTE)
+    css = SKILL_ROOT / "assets" / "gm.css"
+    if css.is_file():
+        text = css.read_text(encoding="utf-8")
+        for m in re.finditer(r"--gm-([\w-]+)\s*:\s*#([0-9a-fA-F]{6})\b", text):
+            pal[m.group(1)] = m.group(2).lower()
+        known = set(pal.values())
+        for m in re.finditer(r"#([0-9a-fA-F]{6})\b", text):
+            h = m.group(1).lower()
+            if h not in known and h != "000000":
+                pal["css-" + h] = h
+                known.add(h)
+    return pal
+
+
+PALETTE = load_palette()
 BY_HEX = {v: k for k, v in PALETTE.items()}
 # colours that are fine when translucent (overlays, shadows, glass)
 ALPHA_OK = {"000000", "ffffff", "030712", "0f172a", "101828", "01cf85", "4d8fff", "3781ff"}
@@ -57,7 +78,15 @@ HYPE = ["revolutionary", "revolutionise", "revolutionize", "game-changing", "gam
         "best-in-class", "state-of-the-art", "synergy", "holistic", "robust", "delight", "magic", "magical",
         "blazing", "lightning-fast", "disrupt", "disruptive", "fast-paced", "dive in", "deep dive",
         "we're excited", "we are excited", "thrilled", "incredible", "incredibly", "amazing", "stunning",
-        "powerful", "transformative", "skyrocket", "turbocharge", "10x your"]
+        "powerful", "transformative", "skyrocket", "turbocharge", "10x your",
+        # German
+        "nahtlos", "nahtlose", "nahtloser", "revolutionär", "revolutionäre", "revolutionieren", "revolutioniert",
+        "bahnbrechend", "bahnbrechende", "wegweisend", "wegweisende", "mühelos", "entfesseln", "entfesselt",
+        "ganzheitlich", "ganzheitliche", "synergie", "synergien", "leistungsstark", "leistungsstarke",
+        "erstklassig", "erstklassige", "weltklasse", "einzigartig", "einzigartige", "disruptiv", "disruptive",
+        "magisch", "begeistert", "wir freuen uns", "tauchen wir ein", "schnelllebig", "schnelllebigen",
+        "auf das nächste level", "next level", "zukunftsweisend", "zukunftsweisende", "spielend leicht",
+        "unglaublich", "atemberaubend", "maßgeschneidert", "rundum-sorglos"]
 EMOJI = re.compile("[\U0001F000-\U0001FAFF\U00002600-\U000026FF\U00002700-\U00002712\U00002714-\U000027BF\U0000FE0F]")
 
 
@@ -105,7 +134,10 @@ def lint_scripts(rep, text, allow):
         if re.search(r"innerHTML|textContent|insertAdjacentHTML|createElement|\.map\(", js):
             built += 1
     if built:
-        rep.add("note", 0, "scripts", f"{built} script block(s) build content at runtime: their copy is not checked, read it yourself")
+        rep.add("note", 0, "scripts", f"{built} script block(s) build content at runtime: this lint cannot read that; scripts/gm_check.py checks the rendered page")
+    for m in re.finditer(r"<script\b[^>]*\bsrc\s*=\s*[\"']([^\"']+)", text, flags=re.I):
+        if not m.group(1).endswith("gm.js"):
+            rep.add("note", m.start(), "scripts", f"external script {m.group(1)[:50]} is not read by this lint; scripts/gm_check.py checks the rendered page")
 
 
 def css_contexts(text: str, suffix: str):
@@ -133,7 +165,7 @@ def check_color(rep, off, hex6, alpha, raw, allow):
     rep.add("error", off, "colour", f"{raw} is not in the palette (nearest: {nearest(hex6)})")
 
 
-def lint_css(rep, base, css, allow):
+def lint_css(rep, base, css, allow, trusted=False):
     # masks legitimately use black/transparent; blank them out (offsets preserved)
     css = re.sub(r"(?:-webkit-)?mask(?:-image)?\s*:[^;}]*", lambda m: " " * len(m.group(0)), css, flags=re.I)
     # colours: hex
@@ -146,12 +178,12 @@ def lint_css(rep, base, css, allow):
         alpha = int(h[6:8], 16) / 255 if len(h) == 8 else 1
         check_color(rep, base + m.start(), h[:6], alpha, m.group(0), allow)
     # colours: rgb()/rgba()
-    for m in re.finditer(r"rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})(?:\s*[,/]\s*([\d.]+%?))?\s*\)", css):
+    for m in re.finditer(r"rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})(?:\s*[,/]\s*([\d.]+%?))?\s*\)", css, flags=re.I):
         r, g, b = (min(int(m.group(i)), 255) for i in (1, 2, 3))
         a = m.group(4)
         alpha = 1 if a is None else (float(a[:-1]) / 100 if a.endswith("%") else float(a))
         check_color(rep, base + m.start(), f"{r:02x}{g:02x}{b:02x}", alpha, m.group(0), allow)
-    for m in re.finditer(r"\b(hsla?|oklch|oklab|lab|lch|color-mix)\(", css):
+    for m in re.finditer(r"\b(hsla?|oklch|oklab|lab|lch|color-mix)\(", css, flags=re.I):
         rep.add("warn", base + m.start(), "colour", f"{m.group(1)}() colour: use a hex token from the palette so it can be checked")
     # colours: named
     for m in re.finditer(rf"(?:^|[;{{\s\"])(?:color|background|background-color|border(?:-[a-z]+)*|fill|stroke|outline)\s*:\s*[^;}}]*?(?<![\w-])({NAMED_BAD})(?![\w-])", css, flags=re.I):
@@ -163,6 +195,18 @@ def lint_css(rep, base, css, allow):
             rep.add("error", base + m.start(), "font", f"font '{first}' is not part of the system (Die Grotesk C, then Geist)")
     for m in re.finditer(r"font-weight\s*:\s*(bold|bolder|[7-9]00)\b", css, flags=re.I):
         rep.add("error", base + m.start(), "weight", f"font-weight {m.group(1)}: headlines are 400, labels 500, product UI at most 600")
+    for m in re.finditer(r"(?:^|[;{\s\"])font\s*:\s*([^;}]+)", css, flags=re.I):
+        value = m.group(1)
+        if re.search(r"\b(bold|bolder|[7-9]00)\b", value, flags=re.I):
+            rep.add("error", base + m.start(1), "weight", f"bold in the font shorthand ({value.strip()[:40]}): headlines are 400, labels 500")
+        fam = re.search(r"\d(?:px|rem|em|pt|%)(?:\s*/\s*[\d.]+\w*)?\s+(.+)$", value.strip())
+        if fam:
+            first = fam.group(1).split(",")[0].strip().strip("'\"").lower()
+            if not first.startswith(FONT_OK):
+                rep.add("error", base + m.start(1), "font", f"font '{first}' is not part of the system (Die Grotesk C, then Geist)")
+    if not trusted:
+        for m in re.finditer(r"\b(?:repeating-)?(?:linear|radial|conic)-gradient\(", css, flags=re.I):
+            rep.add("warn", base + m.start(), "effect", "gradient: the only gradients in this system are the steel viewport and the stage (classes gm-viewport, gm-stage)")
     for m in re.finditer(r"font-style\s*:\s*italic", css, flags=re.I):
         rep.add("warn", base + m.start(), "type", "italics are not used; emphasise with weight 500")
     # effects
@@ -173,7 +217,7 @@ def lint_css(rep, base, css, allow):
     for m in re.finditer(r"box-shadow\s*:\s*([^;}]+)", css, flags=re.I):
         for part in m.group(1).split("),"):
             nums = [float(x) for x in re.findall(r"(-?\d*\.?\d+)px", part)]
-            if len(nums) >= 3 and nums[2] > 40 and not (len(nums) >= 4 and nums[3] < 0):
+            if len(nums) >= 3 and nums[2] >= 32 and not (len(nums) >= 4 and nums[3] < 0):
                 rep.add("warn", base + m.start(), "effect", f"large soft shadow (blur {nums[2]:g}px): the system is flat")
     for m in re.finditer(r"border-radius\s*:\s*([^;}]+)", css, flags=re.I):
         for v in re.findall(r"(\d*\.?\d+)px", m.group(1)):
@@ -183,9 +227,10 @@ def lint_css(rep, base, css, allow):
     for m in re.finditer(r"[^{}]*\{([^{}]*)\}|^([^{}]+)$", css, flags=re.S):
         block = m.group(1) or m.group(2) or ""
         if re.search(r"text-transform\s*:\s*uppercase", block, flags=re.I):
-            size = re.search(r"font-size\s*:\s*(\d*\.?\d+)px", block)
-            if size and float(size.group(1)) > 14:
-                rep.add("warn", base + m.start(), "type", f"uppercase at {size.group(1)}px: uppercase is only for 11 to 14px labels")
+            size = re.search(r"font-size\s*:\s*(\d*\.?\d+)(px|rem|em)", block)
+            px = float(size.group(1)) * (1 if size.group(2) == "px" else 16) if size else 0
+            if px > 14:
+                rep.add("warn", base + m.start(), "type", f"uppercase at {px:g}px: uppercase is only for 11 to 14px labels")
     # motion
     for m in re.finditer(r"cubic-bezier\(\s*([\d.-]+)\s*,\s*([\d.-]+)\s*,\s*([\d.-]+)\s*,\s*([\d.-]+)\s*\)", css):
         if float(m.group(2)) > 1.001 or float(m.group(4)) > 1.001 or float(m.group(2)) < 0 or float(m.group(4)) < 0:
@@ -213,7 +258,7 @@ def lint_copy(rep, text, is_html, check_samples=True):
     for m in re.finditer(r"!", body):
         if not is_html and (body[m.start():m.start() + 2] == "![" or body[max(0, m.start() - 1)] == "<"):
             continue  # markdown image or html comment in a .md file
-        ctx = body[max(0, m.start() - 28):m.start() + 1].strip()
+        ctx = re.sub(r"\s+", " ", body[max(0, m.start() - 28):m.start() + 1]).strip()
         rep.add("error", m.start(), "copy", f"exclamation mark: “…{ctx}”")
     low = body.lower()
     for word in HYPE:
@@ -254,7 +299,8 @@ def lint_file(path: Path, allow) -> Report:
     if suffix in (".html", ".htm", ".css", ".svg"):
         styled = re.sub(r"<script\b.*?</script>", blank, text, flags=re.S | re.I)
         for off, css in css_contexts(styled, suffix):
-            lint_css(rep, off, css, allow)
+            trusted = "gm.css" in css[:400] and "the GeneralMind-style design language" in css[:400]
+            lint_css(rep, off, css, allow, trusted or path.resolve() == SKILL_ROOT / "assets" / "gm.css")
     if suffix in (".html", ".htm"):
         lint_scripts(rep, text, allow)
         text = re.sub(r"<script\b.*?</script>", blank, text, flags=re.S | re.I)

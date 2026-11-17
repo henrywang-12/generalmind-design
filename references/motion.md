@@ -8,7 +8,7 @@ The site moves very little, and that restraint is part of the look. Motion confi
 |---|---|---|---|
 | Section content appears | Fades from 0 to 1 while rising 16px | 0.6s, `cubic-bezier(.22, 1, .36, 1)`, once | `.gm-reveal` → `.is-in` |
 | Items in a group | Same, each delayed 0.06 to 0.08s after the previous | stagger | `data-gm-stagger="0.08"` on the parent |
-| Numbers | Count up from 0 to the value, ease-out | 1.2s, once, when visible | `data-gm-count`, `data-gm-prefix`, `data-gm-suffix` |
+| Numbers | Count up from 0 to the value, ease-out, formatted in the page's language (`<html lang>`) | 1.2s, once, when visible | `data-gm-count`, `data-gm-prefix`, `data-gm-suffix`, `data-gm-locale` |
 | Buttons, links | Background or opacity change | 0.2s | `.gm-btn`, `.gm-link` |
 | Button arrow | Moves 2px right on hover | 0.2s | `.gm-arrow` |
 | Nav | Hairline and faint shadow appear after 8px of scroll | 0.3s | `.gm-nav.is-scrolled` |

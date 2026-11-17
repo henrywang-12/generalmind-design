@@ -3,21 +3,27 @@
 
     python3 scripts/inline.py in.html out.html
     python3 scripts/inline.py in.html out.html --no-brand
+    python3 scripts/inline.py in.html out.html --allow-missing   (missing images only warn)
 
 What it does:
 1. Inlines gm.css and gm.js (found next to the input, or in this skill's assets/).
 2. Applies the private brand, if this installation has one (brand.local/brand.json):
-   every wordmark that carries the brand's name or a template placeholder, and
+   every wordmark that carries the brand's name or a template sample name, and
    every <span data-gm-logo></span>, becomes the real logo. Dark and white
    versions are both embedded; gm.css shows the right one for the background.
    Force one with data-gm-logo="dark" or data-gm-logo="white".
-3. Embeds local images (<img src="elbstrom.svg">) as data URIs, so customer logos
-   travel inside the file. Bare filenames are also looked up in ./logos/ and in
-   brand.local/customers/.
+3. Embeds local images (<img src="customer.svg">, url(...) in styles) as data
+   URIs, so customer logos travel inside the file. Bare filenames are also
+   looked up in ./logos/ and in brand.local/customers/.
+
+Then it checks its own work. It exits with code 1, and says why, when the
+result would be broken once sent: gm.css still linked, a logo placeholder left
+unfilled, an image that could not be found. HTML comments are left untouched.
 
 The only thing still fetched at view time is the Geist font from Google Fonts.
 """
 import base64
+import html as htmllib
 import json
 import mimetypes
 import re
@@ -28,9 +34,19 @@ ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
 BRAND_DIR = ROOT / "brand.local"
 PLACEHOLDER_NAMES = {"northdesk", "your company", "yourcompany", "brand", "company"}
+COMMENT = re.compile(r"(<!--.*?-->)", re.S)
+
+
+def outside_comments(text: str, fn) -> str:
+    """Apply fn to the parts of the document that are not inside HTML comments."""
+    parts = COMMENT.split(text)
+    for i in range(0, len(parts), 2):
+        parts[i] = fn(parts[i])
+    return "".join(parts)
 
 
 def find(ref: str, base: Path) -> Path:
+    ref = ref.split("?")[0].split("#")[0]
     for candidate in (base / ref, ASSETS / Path(ref).name):
         if candidate.is_file():
             return candidate
@@ -52,22 +68,28 @@ def load_brand():
 
 
 def prep_svg(svg: str, cls: str, uid: str, recolour: bool) -> str:
-    svg = re.sub(r"<\?xml.*?\?>|<!DOCTYPE.*?>", "", svg, flags=re.S).strip()
+    svg = re.sub(r"<\?xml.*?\?>|<!DOCTYPE.*?>|<!--.*?-->", "", svg, flags=re.S).strip()
     head = re.match(r"<svg\b[^>]*>", svg)
     if not head:
         return ""
     tag = re.sub(r'\s(?:width|height|class)="[^"]*"', "", head.group(0))
     tag = tag[:-1] + f' class="{cls}" aria-hidden="true">'
     body = svg[head.end():]
-    if recolour:  # single-colour logo follows the text colour (ink on white)
+    if recolour:  # a single-colour logo follows the text colour (ink on white)
         body = re.sub(r'fill="#(?:000|000000|030712)"', 'fill="currentColor"', body, flags=re.I)
-    # keep ids unique when the logo appears several times on a page
-    for ident in set(re.findall(r'\bid="([^"]+)"', body)):
+    for ident in set(re.findall(r'\bid="([^"]+)"', body)):  # keep ids unique when the logo repeats
         body = body.replace(f'id="{ident}"', f'id="{ident}-{uid}"').replace(f"url(#{ident})", f"url(#{ident}-{uid})")
     return tag + body
 
 
 class Brander:
+    WORDMARK = re.compile(
+        r"""(<(a|span|div)\b[^>]*\bclass\s*=\s*(["'])[^"']*\bgm-wordmark\b[^"']*\3[^>]*>)   # opening tag
+            (?:\s|&nbsp;)*<span\b[^>]*\bgm-wordmark__mark\b[^>]*(?:/>|>\s*</span>)            # the neutral mark
+            ((?:(?!</\2>).)*?)                                                               # the name
+            (</\2>)""", re.S | re.X)
+    PLACEHOLDER = re.compile(r"""<(span|div|a)\b[^>]*\bdata-gm-logo\b[^>]*?(?:/>|>\s*</\1>)""", re.S)
+
     def __init__(self, brand):
         self.brand, self.count = brand, 0
         self.names = PLACEHOLDER_NAMES | {brand.get("name", "").lower()} | {n.lower() for n in brand.get("aliases", [])}
@@ -80,50 +102,71 @@ class Brander:
         attr = f' data-gm-logo="{force}"' if force in ("dark", "white") else ""
         if style:
             attr += f' style="{style}"'
-        name = self.brand.get("name", "")
+        name = htmllib.escape(self.brand.get("name", ""), quote=True)
         return f'<!-- gm-lint-off --><span class="gm-logo"{attr} role="img" aria-label="{name}">{dark}{white}</span><!-- gm-lint-on -->'
 
-    def apply(self, html: str) -> str:
-        # explicit placeholders: <span data-gm-logo></span> / data-gm-logo="white"
-        def explicit(m):
-            style = re.search(r'\bstyle="([^"]*)"', m.group(0))
-            return self.logo(m.group(2) or "", style.group(1) if style else "")
-        html = re.sub(r'<(span|div|a)\b[^>]*\bdata-gm-logo(?:="(dark|white)?")?[^>]*>\s*</\1>', explicit, html)
+    @staticmethod
+    def plain(fragment: str) -> str:
+        return htmllib.unescape(re.sub(r"<[^>]+>", "", fragment)).replace("\xa0", " ").strip()
 
-        # text wordmarks from the templates: <x class="gm-wordmark"><span class="gm-wordmark__mark"></span>Name</x>
+    def apply(self, text: str) -> str:
+        def explicit(m):
+            tag = m.group(0)
+            force = re.search(r"""data-gm-logo\s*=\s*["'](dark|white)["']""", tag)
+            style = re.search(r'\bstyle\s*=\s*"([^"]*)"', tag) or re.search(r"\bstyle\s*=\s*'([^']*)'", tag)
+            return self.logo(force.group(1) if force else "", style.group(1) if style else "")
+
         def wordmark(m):
-            if m.group(4).strip().lower() not in self.names:
+            if self.plain(m.group(4)).lower() not in self.names:
                 return m.group(0)  # someone else's name: leave it alone
             return m.group(1) + self.logo() + m.group(5)
-        html = re.sub(r'(<(a|span|div)\b[^>]*\bclass="[^"]*\bgm-wordmark\b[^"]*"[^>]*>)\s*(<span class="gm-wordmark__mark"[^>]*></span>)([^<]*)(</\2>)',
-                      wordmark, html)
-        return html
+
+        def run(part):
+            part = self.PLACEHOLDER.sub(explicit, part)
+            return self.WORDMARK.sub(wordmark, part)
+        return outside_comments(text, run)
+
+    def leftovers(self, text: str) -> int:
+        """Wordmarks that should have become the logo but did not match the pattern."""
+        body = COMMENT.sub("", text)
+        left = 0
+        for m in re.finditer(r"gm-wordmark__mark\b[^>]*(?:/>|>\s*</span>)\s*((?:<[^>]+>|[^<])*?)</(?:a|span|div)>", body, flags=re.S):
+            if self.plain(m.group(1)).lower() in self.names:
+                left += 1
+        return left
 
 
-def embed_images(html: str, base: Path):
-    count = 0
+def embed_images(text: str, base: Path):
+    count, missing = 0, []
 
-    def repl(m):
+    def data_uri(src: str):
         nonlocal count
-        src = m.group(2)
-        if re.match(r"(?:https?:|data:|//)", src):
-            return m.group(0)
-        for candidate in (base / src, base / "logos" / Path(src).name, BRAND_DIR / "customers" / Path(src).name):
+        if re.match(r"(?:https?:|data:|//|#)", src) or not src.strip():
+            return None
+        clean = src.split("?")[0].split("#")[0]
+        for candidate in (base / clean, base / "logos" / Path(clean).name, BRAND_DIR / "customers" / Path(clean).name):
             if candidate.is_file():
-                mime = mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
-                if candidate.suffix.lower() == ".svg":
-                    mime = "image/svg+xml"
-                data = base64.b64encode(candidate.read_bytes()).decode("ascii")
+                mime = "image/svg+xml" if candidate.suffix.lower() == ".svg" else (mimetypes.guess_type(candidate.name)[0] or "application/octet-stream")
                 count += 1
-                return f'{m.group(1)}data:{mime};base64,{data}{m.group(3)}'
-        print(f"  warning: image not found, left as is: {src}", file=sys.stderr)
-        return m.group(0)
+                return f"data:{mime};base64," + base64.b64encode(candidate.read_bytes()).decode("ascii")
+        missing.append(src)
+        return None
 
-    # skip <img> examples that only appear inside HTML comments
-    parts = re.split(r"(<!--.*?-->)", html, flags=re.S)
-    for i in range(0, len(parts), 2):
-        parts[i] = re.sub(r'(<img\b[^>]*\bsrc=")([^"]+)(")', repl, parts[i])
-    return "".join(parts), count
+    def img(m):
+        uri = data_uri(m.group(3))
+        return f"{m.group(1)}{m.group(2)}{uri}{m.group(2)}" if uri else m.group(0)
+
+    def css_url(m):
+        if not re.search(r"\.(?:svg|png|jpe?g|webp|gif)(?:[?#].*)?$", m.group(2), flags=re.I):
+            return m.group(0)
+        uri = data_uri(m.group(2))
+        return f'url("{uri}")' if uri else m.group(0)
+
+    def run(part):
+        part = re.sub(r"""(<img\b[^>]*?\bsrc\s*=\s*)(["'])([^"']+)\2""", img, part, flags=re.S)
+        return re.sub(r"""url\(\s*(["']?)([^"')]+)\1\s*\)""", css_url, part)
+
+    return outside_comments(text, run), count, missing
 
 
 def main() -> int:
@@ -132,28 +175,69 @@ def main() -> int:
         print(__doc__)
         return 2
     src, out = Path(args[0]), Path(args[1])
-    html = src.read_text(encoding="utf-8")
+    if not src.is_file():
+        print(f"inline.py: no such file: {src}", file=sys.stderr)
+        return 2
+    if not out.resolve().parent.is_dir():
+        print(f"inline.py: the output folder does not exist: {out.resolve().parent}", file=sys.stderr)
+        return 2
+    text = src.read_text(encoding="utf-8")
     base = src.resolve().parent
+    problems = []
+    counts = {"css": 0, "js": 0}
 
-    def css(match: re.Match) -> str:
-        return "<style>\n" + find(match.group(1), base).read_text(encoding="utf-8") + "\n</style>"
+    def swap(kind, open_tag, close_tag):
+        def repl(match):
+            try:
+                body = find(match.group(2), base).read_text(encoding="utf-8")
+            except FileNotFoundError as e:
+                problems.append(str(e))
+                return match.group(0)
+            counts[kind] += 1
+            return f"{open_tag}\n{body}\n{close_tag}"
+        return repl
 
-    def js(match: re.Match) -> str:
-        return "<script>\n" + find(match.group(1), base).read_text(encoding="utf-8") + "\n</script>"
-
-    html, n_css = re.subn(r'<link[^>]+href="([^"]*gm\.css)"[^>]*>', css, html)
-    html, n_js = re.subn(r'<script[^>]+src="([^"]*gm\.js)"[^>]*>\s*</script>', js, html)
+    def bundle(part):
+        part = re.sub(r"""<link\b[^>]*\bhref\s*=\s*(["'])([^"']*\bgm\.css(?:[?#][^"']*)?)\1[^>]*>""", swap("css", "<style>", "</style>"), part)
+        return re.sub(r"""<script\b[^>]*\bsrc\s*=\s*(["'])([^"']*\bgm\.js(?:[?#][^"']*)?)\1[^>]*>\s*</script>""", swap("js", "<script>", "</script>"), part)
+    text = outside_comments(text, bundle)
 
     brand_note = "no private brand"
     brand = None if "--no-brand" in sys.argv else load_brand()
     if brand:
         brander = Brander(brand)
-        html = brander.apply(html)
+        text = brander.apply(text)
         brand_note = f"{brand.get('name', 'brand')} logo x{brander.count}"
+        left = brander.leftovers(text)
+        if left:
+            problems.append(f"{left} wordmark(s) with the brand's name were not turned into the logo: write them exactly as "
+                            '<span class="gm-wordmark"><span class="gm-wordmark__mark"></span>Name</span>, or use <span data-gm-logo></span>')
 
-    html, n_img = embed_images(html, base)
-    out.write_text(html, encoding="utf-8")
-    print(f"{out}: {n_css} stylesheet(s), {n_js} script(s), {n_img} image(s) embedded, {brand_note}, {len(html) // 1024} KB")
+    text, n_img, missing = embed_images(text, base)
+    visible = COMMENT.sub("", text)
+    if re.search(r"<link\b[^>]*\bgm\.css", visible):
+        problems.append("gm.css is still linked, not inlined: the file will be unstyled once it is sent")
+    elif "--gm-ink" not in visible:
+        problems.append('the file has no gm.css: add <link rel="stylesheet" href="gm.css"> to its head')
+    unfilled = re.sub(r'<span class="gm-logo"[^>]*>', "", visible)
+    if re.search(r"<[a-z]+\b[^>]*\bdata-gm-logo\b", unfilled):
+        problems.append("a data-gm-logo placeholder was left unfilled" + ("" if brand else
+                        ": this installation has no private brand (brand.local/), so write the company name as a text wordmark instead"))
+    allow_missing = "--allow-missing" in sys.argv
+    for m in missing:
+        note = f"image not found: {m} (put it next to the input or in ./logos/, or fetch it with scripts/logo.py)"
+        if allow_missing:
+            print(f"  warning: {note}", file=sys.stderr)
+        else:
+            problems.append(note)
+
+    out.write_text(text, encoding="utf-8")
+    print(f"{out}: {counts['css']} stylesheet(s), {counts['js']} script(s), {n_img} image(s) embedded, {brand_note}, {len(text) // 1024} KB")
+    if problems:
+        for p in problems:
+            print(f"  PROBLEM: {p}", file=sys.stderr)
+        print(f"inline.py: {len(problems)} problem(s). The file was written but is not ready to send.", file=sys.stderr)
+        return 1
     return 0
 
 

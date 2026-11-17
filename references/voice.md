@@ -108,7 +108,7 @@ Avoid: revolutionary, game-changing, cutting-edge, next-generation, seamless, ef
 
 ## German
 
-The same voice in German: plain, concrete, "Sie" for enterprise readers. Short main clauses, verbs early, no anglicism pile-ups ("KI liest die Auftragsbestätigung, gleicht sie mit der Bestellung ab und meldet Abweichungen."). Compound nouns over marketing English. Sentence case follows normal German capitalisation. Numbers in German format (1.100 Zeilen pro Woche, 94 %).
+The same voice in German: plain, concrete, "Sie" for enterprise readers. Short main clauses, verbs early, no anglicism pile-ups ("KI liest die Auftragsbestätigung, gleicht sie mit der Bestellung ab und meldet Abweichungen."). Compound nouns over marketing English. Sentence case follows normal German capitalisation. Numbers in German format (1.100 Zeilen pro Woche, 94 %). Put `lang="de"` on the page so counted numbers and hyphenation follow. The check knows the usual German hype words too (nahtlos, revolutionär, bahnbrechend, ganzheitlich …).
 
 ## Before and after
 

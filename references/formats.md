@@ -76,6 +76,8 @@ Slide types (all in the template):
 
 Rules: one idea per slide; the headline is a full claim that makes sense alone; no bullet paragraphs; no more than three of anything; night only at the end; no slide transitions or builds; no clip-art, no stock photos, no icons beside bullets. A 10-slide deck has at most three viewport visuals.
 
+Headline length: three lines at most, and the check fails a slide whose headline runs longer or whose content touches the logo row or the footer. As a budget: about 60 characters on the title and closing slides, 80 on a standard slide, 70 on a Visual + text slide. German runs about a third longer than English for the same claim, so cut harder.
+
 Backgrounds: the table gives each type's usual background, but rhythm wins. Alternate white and mist from slide to slide and switch a type's background when two neighbours would match.
 
 Which slides to pick:
@@ -154,6 +156,10 @@ Styles: Title 28pt regular; Heading 1 20pt regular; Heading 2 13.5pt Medium; Nor
 - White fragments: `#FFFFFF`, radius 4 (flat) or 12 with shadow `0 10 26 -14 rgba(15,23,42,.5)`.
 - Glass outlines: 1px `rgba(255,255,255,.7)` stroke, fill `rgba(255,255,255,.12)`.
 - Export at 2x for retina where possible.
+
+## A web page or dashboard as a PDF
+
+Do not print a web page or a dashboard to PDF: print lays the page out on a narrow page, so it comes out in its phone layout. Send a picture instead (`scripts/shoot.sh page.html page.png 1440 full`), or rebuild the content as `.gm-sheet` pages. Only `.gm-sheet` and `.gm-slide` documents are made for PDF.
 
 ## Single-file HTML and artifacts
 

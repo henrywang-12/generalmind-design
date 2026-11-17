@@ -57,7 +57,8 @@ Judgement calls:
 - **No AI in the tool?** Name the screen plainly ("Inbound shipments") and leave out AutoPilot and the sparkle. The "AI <task>" title is for screens where the AI does the task.
 - **Order of blocks.** Panels sit below a short table. When the table is long (more than about ten rows), put the panels above it so the chart is on the first screen.
 - **Long lists.** Page at 25 rows. Sort so the rows that need a person come first. Flag such a row with the 10px amber line under its name ("Chase supplier: ready late") and an outlined row action.
-- **Phone width.** Below 900px the sidebar is hidden, KPI cards go two-up, tabs scroll sideways and the table scrolls inside its wrapper (built into `gm.css`).
+- **Phone width.** Below 900px the sidebar folds into a strip that keeps the logo, KPI cards go two-up, tabs scroll sideways and the table scrolls inside its wrapper (built into `gm.css`).
+- **A dashboard as a picture.** In a screenshot nobody can scroll. If the check warns that part of the table is off-screen, drop columns or add `gm-app__tablewrap--wrap` to the wrapper: cells then wrap at word boundaries so every column stays on the page.
 - **Labels.** Tabs, filters and actions are short Title Case labels as in the product ("All Suppliers", "More Filters"); everything else is sentence case.
 - **Scripts.** A dashboard does not need `gm.js`. If rows are built by a script, the lint cannot read them: check that copy by eye.
 

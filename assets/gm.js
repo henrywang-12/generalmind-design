@@ -19,8 +19,12 @@
     var decimals = (raw.split(".")[1] || "").length;
     var prefix = el.getAttribute("data-gm-prefix") || "";
     var suffix = el.getAttribute("data-gm-suffix") || "";
+    // numbers follow the page language: 1,100 on an English page, 1.100 on a German one
+    var locale = el.getAttribute("data-gm-locale") || document.documentElement.lang || "en";
     var fmt = function (v) {
-      return prefix + v.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+      var opts = { minimumFractionDigits: decimals, maximumFractionDigits: decimals }, text;
+      try { text = v.toLocaleString(locale, opts); } catch (e) { text = v.toLocaleString("en", opts); }
+      return prefix + text + suffix;
     };
     if (reduce) { el.textContent = fmt(target); return; }
     var start = null, dur = 1200;

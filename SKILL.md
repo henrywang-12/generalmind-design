@@ -22,8 +22,8 @@ If a result feels busy, colourful, bold or clever, it is off-brand. Remove thing
 2. **Use the tokens, never invent values.** Every colour, size, radius and spacing you need is in `assets/gm.css` (and explained in `references/foundations.md`). If you are about to type a hex code or a pixel size that is not in there, stop and find the token. This is about the system's values: colours, type roles, weights, radii and section spacing. Writing layout CSS (a grid, a width, a phone layout) is ordinary work. And inside a drawing - a UI fragment on a viewport, a cover diagram, a slide or A4 canvas - sizes scale with the canvas, as the templates do; keep the proportions, colours, weights and radii.
 3. **Write the copy in the house voice** before polishing layout - `references/voice.md`. The voice is half of the likeness; correct styling around hype copy still reads as fake.
 4. **Build it.** Put a wordmark or `<span data-gm-logo></span>` wherever the sender's logo belongs and `<img class="gm-clogo" src="customer.svg">` for a customer's. Write your HTML with `<link rel="stylesheet" href="gm.css">` (plus `<script src="gm.js"></script>` on marketing pages; dashboards, decks and one-pagers do not need it), then run `python3 scripts/inline.py in.html out.html`. It finds both files in this skill's `assets/` folder wherever your file lives, swaps in the real logo from the private brand, embeds local images, and writes one file. The only thing still fetched is the Geist font from Google Fonts; offline it falls back to Helvetica or Arial.
-5. **Look at it.** Render with `scripts/shoot.sh file.html out.png 1440 full` (the whole page) and read the image. For a deck or a document, also export `out.pdf`: the script counts the pages against your sheets or slides and writes a picture of every PDF page (`out-page-1.png` …). Read those too. A PDF is laid out again for print, and a page that looked right on screen can come out squeezed or cut. Compare against the checklist at the end of this file. Do not hand over something you have not seen.
-6. **Lint it.** `python3 scripts/gm_lint.py file.html` catches off-palette colours, wrong fonts, bold headings, stray gradients, emoji, exclamation marks and hype words. Fix every error; read every warning. It reads markup and CSS; copy that a script builds at runtime is not checked, so read that yourself.
+5. **Check it.** `python3 scripts/gm_check.py out.html` and do not go on until it prints PASS. It opens the file in a real browser and fails when a page or slide is too long, when text is cut, when a font, weight or colour is off the system, when copy has emoji, exclamation marks or hype words (English and German), when a logo or image is missing, or when a template sample name is left in. Because it reads the rendered page, content built by a script is covered. Fix every error; read every warning.
+6. **Look at it.** The check cannot judge quality. Render with `scripts/shoot.sh out.html out.png 1440 full` and read the image. For a deck or a document, export `scripts/shoot.sh out.html out.pdf` and read the page pictures it writes (`out-page-1.png` …): the PDF is laid out again for print and is the thing that gets sent. If that export exits with an error, the file is not ready. Compare against the checklist at the end of this file.
 7. **Deliver**, and state plainly what is placeholder (logos, photos, numbers you were not given).
 
 ## Formats
@@ -85,7 +85,7 @@ product UI (Geist 12px)  text #262626 / #525252 / #A1A1A1   surface #FFFFFF on #
 - **Typeface.** Die Grotesk is a commercial typeface from Klim Type Foundry. `gm.css` names it first, so it is used automatically when installed, and falls back to Geist (free, loaded from Google Fonts). Do not download or embed Die Grotesk font files from anywhere. When the real font is in use, set `--gm-track-display: -0.01em`.
 - **Wordmark.** Use the user's logo if they give you one. Otherwise set their name as text in the wordmark style; the small neutral mark from the templates may stay or go.
 - **Real names in public.** Before a real customer is named in anything public (a post, a case study, a logo wall), tell the user it needs that customer's consent.
-- **Language.** Write in the language the user writes in, unless they name the audience's language.
+- **Language.** Write in the language the user writes in, unless they name the audience's language. Set it on the page (`<html lang="de">`): numbers then count up in that language's format (1.100, not 1,100) and long German words hyphenate.
 - **Customer logos, photos, figures.** Never invent a customer logo, a testimonial, a certification badge or a metric and present it as real. Use the placeholder styles and say what is placeholder.
 
 ## Before you hand it over
@@ -100,7 +100,7 @@ Look at the rendered result and answer these honestly:
 - Do the numbers stand alone, large and plain, with a label that says exactly what they count?
 - Does the copy sound like someone who runs operations, or like an advert? Any "!", emoji, "seamless", "unlock", "revolutionise"?
 - Does it still look right on a phone (web: shoot at 500px wide, the narrowest headless Chrome renders) or printed (deck, one-pager)?
-- Did `scripts/gm_lint.py` pass?
+- Did `scripts/gm_check.py` print PASS, and did the PDF export (if there is one) exit without an error?
 
 ## Files
 
@@ -118,7 +118,8 @@ references/formats.md       recipe per deliverable, and PPTX / DOCX / email / im
 references/cobranding.md    your logo and the customer's: finding it, sizes, where each goes
 brand.local/                private, not in the repo: your company, your logo, saved customer logos
 scripts/shoot.sh            render HTML to PNG or PDF (headless Chrome); `full` measures the page height
-scripts/gm_lint.py          off-brand detector
+scripts/gm_check.py         THE check before delivery: opens the file in a browser; fit, print, look, copy, brand
+scripts/gm_lint.py          the source-only part of that check (markup and CSS); gm_check runs it for you
 scripts/inline.py           one self-contained file: CSS, JS, your logo and local images embedded
 scripts/logo.py             find a company's logo (saved files, brand source, their website)
 scripts/viewport.py         generate the steel viewport background as a PNG, any size

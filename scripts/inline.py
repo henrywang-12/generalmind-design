@@ -11,7 +11,7 @@ What it does:
    every <span data-gm-logo></span>, becomes the real logo. Dark and white
    versions are both embedded; gm.css shows the right one for the background.
    Force one with data-gm-logo="dark" or data-gm-logo="white".
-3. Embeds local images (<img src="oatly.svg">) as data URIs, so customer logos
+3. Embeds local images (<img src="elbstrom.svg">) as data URIs, so customer logos
    travel inside the file. Bare filenames are also looked up in ./logos/ and in
    brand.local/customers/.
 

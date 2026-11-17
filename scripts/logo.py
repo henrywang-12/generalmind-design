@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """logo.py - find a company's logo and save it locally.
 
-    python3 scripts/logo.py "Oatly"                      (cache and brand source only)
-    python3 scripts/logo.py "Oatly" oatly.com            (also look on their website)
-    python3 scripts/logo.py "Brenner Maschinenbau" brenner.example --out ./logos
+    python3 scripts/logo.py "Elbstrom"                      (cache and brand source only)
+    python3 scripts/logo.py "Elbstrom" elbstrom.example            (also look on their website)
+    python3 scripts/logo.py "Stadtwerke Lahn" stadtwerke-lahn.example --out ./logos
 
 Looks, in this order, and stops at the first hit:
 1. Already saved: brand.local/customers/<slug>.* or ./logos/<slug>.*

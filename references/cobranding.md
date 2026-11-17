@@ -18,8 +18,8 @@ Without a private brand, the wordmark stays as text in the user's company name. 
 ## Finding the customer's logo
 
 ```bash
-python3 scripts/logo.py "Oatly"              # saved logos and the brand's own logo source
-python3 scripts/logo.py "Oatly" oatly.com    # also the customer's website
+python3 scripts/logo.py "Elbstrom"              # saved logos and the brand's own logo source
+python3 scripts/logo.py "Elbstrom" elbstrom.example    # also the customer's website
 ```
 
 It looks in the saved logos, then in the private brand's logo source, then on the customer's site, and it is strict: it only returns a file the site itself marks as its logo. Read its last lines:
@@ -30,7 +30,7 @@ It looks in the saved logos, then in the private brand's logo source, then on th
 
 Until a real file is in hand, set the customer's name as text in the logo slot (`.gm-clogo-text`) and say so. Never draw, trace or approximate a logo, and never use a different company's mark as a stand-in.
 
-Reference the file by name (`<img class="gm-clogo" src="oatly.svg" alt="Oatly">`); `inline.py` finds it in `./logos/` or `brand.local/customers/` and embeds it in the output.
+Reference the file by name (`<img class="gm-clogo" src="elbstrom.svg" alt="Elbstrom">`); `inline.py` finds it in `./logos/` or `brand.local/customers/` and embeds it in the output.
 
 ## Rules for a customer's logo
 
@@ -53,13 +53,13 @@ Reference the file by name (`<img class="gm-clogo" src="oatly.svg" alt="Oatly">`
 | **Post image** | Optional small white logo, bottom-left | Named in the title text only; no customer logo on a cover unless they approved it |
 | **Article** | Nav and footer | Named in the text |
 
-The lockup (`.gm-lockup`) is: our logo, a small grey "x", their logo, on one baseline with their logo about 1.35 times the height of ours' text. In running text and on hero media the same pairing is written "GeneralMind x Oatly".
+The lockup (`.gm-lockup`) is: our logo, a small grey "x", their logo, on one baseline with their logo about 1.35 times the height of ours' text. In running text and on hero media the same pairing is written "Northdesk x Elbstrom".
 
 ```html
 <span class="gm-lockup">
   <span data-gm-logo></span>
   <span class="gm-lockup__x">x</span>
-  <img class="gm-clogo" src="oatly.svg" alt="Oatly">
+  <img class="gm-clogo" src="elbstrom.svg" alt="Elbstrom">
 </span>
 ```
 

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>Northdesk | Intro deck</title>
+<link rel="stylesheet" href="../gm.css">
+<style>@page { size: 1280px 720px; }</style>
+</head>
+<body>
+<!-- DECK, 1280x720 slides. Print to PDF for a file (one slide per page).
+     Rules: one idea per slide. Eyebrow, then a regular-weight headline, then ONE
+     of: a lead, a point list, numbers, a viewport visual. White and mist slides
+     alternate; night only for the close. Export: scripts/shoot.sh deck.html deck.pdf Footer: wordmark left, page right, 12px grey. -->
+<div class="gm-deck">
+
+  <!-- 1 TITLE -->
+  <section class="gm-slide">
+    <p class="gm-eyebrow gm-eyebrow--quiet">Made for utilities</p>
+    <h1 class="gm-slide__title gm-slide__title--xl" style="margin-top:auto">Every meter reading, handled. Every exception, yours to decide.</h1>
+    <p class="gm-lead" style="margin-bottom:56px">Intro for Elbstrom · 17 November 2026</p>
+    <footer class="gm-slide__foot"><span class="gm-wordmark" style="font-size:16px;color:var(--gm-ink)"><span class="gm-wordmark__mark" style="width:12px;height:12px"></span>Northdesk</span><span>1</span></footer>
+  </section>
+
+  <!-- 2 STATEMENT -->
+  <section class="gm-slide gm-slide--mist gm-slide--center">
+    <p class="gm-eyebrow">How it fits</p>
+    <h2 class="gm-slide__title">Your billing system already does its job. The delay is in the hours before a case ever reaches it.</h2>
+    <footer class="gm-slide__foot"><span>Northdesk</span><span>2</span></footer>
+  </section>
+
+  <!-- 3 POINTS -->
+  <section class="gm-slide">
+    <p class="gm-eyebrow">What we see at desks like yours</p>
+    <h2 class="gm-slide__title">Why it gets harder every year.</h2>
+    <ul class="gm-slide__body" style="gap:0">
+      <li class="gm-point"><small>01</small>Forms arrive as PDFs, photos and free text. Each is read and keyed by hand.</li>
+      <li class="gm-point"><small>02</small>One in five is incomplete, so the case waits a week for a reply.</li>
+      <li class="gm-point" style="border-bottom:1px solid var(--gm-line)"><small>03</small>September carries a third of the year, on a team sized for March.</li>
+    </ul>
+    <footer class="gm-slide__foot"><span>Northdesk</span><span>3</span></footer>
+  </section>
+
+  <!-- 4 VISUAL + TEXT -->
+  <section class="gm-slide gm-slide--split">
+    <div class="gm-slide__text">
+      <p class="gm-eyebrow">How it works</p>
+      <h2 class="gm-slide__title">Every decision is scored before anything is booked.</h2>
+      <p class="gm-lead">Above your threshold, it books. Below it, a clerk decides.</p>
+    </div>
+    <div class="gm-viewport">
+      <div class="gm-float gm-float--flat" style="width:82%;font-size:14px;line-height:20px;display:grid;gap:14px">
+        <div class="gm-score">87<small>/100</small></div>
+        <div class="gm-bar"><i style="width:87%"></i></div>
+        <div class="gm-row" style="justify-content:space-between;gap:10px"><span>History match</span><div class="gm-bar" style="flex:1"><i style="width:92%"></i></div><span>92</span></div>
+        <div class="gm-row" style="justify-content:space-between;gap:10px"><span>Completeness</span><div class="gm-bar" style="flex:1"><i style="width:88%"></i></div><span>88</span></div>
+        <div class="gm-row" style="gap:8px"><span class="gm-tag" style="color:var(--gm-ink-2)">Score 87</span>≥<span class="gm-tag gm-tag--amber">threshold 75</span>→<span class="gm-tag gm-tag--green">Auto-execute</span></div>
+      </div>
+    </div>
+    <footer class="gm-slide__foot"><span>Northdesk</span><span>4</span></footer>
+  </section>
+
+  <!-- 5 NUMBERS -->
+  <section class="gm-slide gm-slide--mist">
+    <p class="gm-eyebrow">Results at Stadtwerke Lahn</p>
+    <h2 class="gm-slide__title">Six weeks from first form to Autopilot.</h2>
+    <div class="gm-slide__body gm-slide__body--3" style="align-content:end;padding-bottom:40px">
+      <div class="gm-stat"><b>94%</b><span>of readings booked with zero edits</span></div>
+      <div class="gm-stat"><b>412</b><span>readings processed each week</span></div>
+      <div class="gm-stat"><b>0</b><span>temps trained for the October peak</span></div>
+    </div>
+    <footer class="gm-slide__foot"><span>Northdesk</span><span>5</span></footer>
+  </section>
+
+  <!-- 6 FLOW -->
+  <section class="gm-slide">
+    <p class="gm-eyebrow">The pilot</p>
+    <h2 class="gm-slide__title">One process first. The next one when this one has earned it.</h2>
+    <div class="gm-slide__body" style="align-content:center">
+      <div class="gm-steps" style="flex-wrap:nowrap">
+        <div class="gm-step" style="flex:1;padding:24px"><b style="font-size:22px">Weeks 1 to 2</b><span style="font-size:16px;line-height:24px">Train on 50 of your real forms, in a sandbox</span></div><span class="gm-steps__arrow">→</span>
+        <div class="gm-step" style="flex:1;padding:24px"><b style="font-size:22px">Weeks 3 to 5</b><span style="font-size:16px;line-height:24px">Run beside your team. AI proposes, clerks decide</span></div><span class="gm-steps__arrow">→</span>
+        <div class="gm-step" style="flex:1;padding:24px"><b style="font-size:22px">Weeks 6 to 8</b><span style="font-size:16px;line-height:24px">Confident cases close themselves</span></div>
+      </div>
+    </div>
+    <footer class="gm-slide__foot"><span>Northdesk</span><span>6</span></footer>
+  </section>
+
+  <!-- 7 QUOTE -->
+  <section class="gm-slide gm-slide--center">
+    <span class="gm-quote__mark" aria-hidden="true">“</span>
+    <blockquote class="gm-slide__title" style="font-size:44px;line-height:54px;max-width:1040px;margin-top:28px">Northdesk took over the readings our team used to key by hand every October. We kept the judgment calls and lost the queue.</blockquote>
+    <div class="gm-person" style="margin-top:40px"><span class="gm-person__photo"></span><div><b>Jana Petrovic</b><span>Head of Customer Service, Stadtwerke Lahn</span></div></div>
+    <footer class="gm-slide__foot"><span>Northdesk</span><span>7</span></footer>
+  </section>
+
+  <!-- 8 CLOSE (night) -->
+  <section class="gm-slide gm-slide--night gm-slide--center">
+    <p class="gm-eyebrow">Next step</p>
+    <h2 class="gm-slide__title gm-slide__title--xl">A free pilot on your own forms.</h2>
+    <p class="gm-lead">30 to 50 real cases, no integration. Decide after you have seen them run.</p>
+    <div class="gm-row" style="margin-top:40px"><span class="gm-btn gm-btn--on-dark">Book the pilot <span class="gm-arrow">→</span></span></div>
+    <footer class="gm-slide__foot"><span>hello@northdesk.example</span><span>8</span></footer>
+  </section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200">
+<title>Cover image, landscape</title>
+<link rel="stylesheet" href="../gm.css">
+<style>body { background: #e5e7eb; display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 0; }</style>
+</head>
+<body>
+<!-- COVER IMAGE for a post or an article, landscape 1200x627 (link previews, article heroes).
+     Square 1200x1200 version: cover.html.
+       scripts/shoot.sh cover-landscape.html cover.png 1200 627
+     The recipe never changes: steel viewport with grain, the title in white,
+     regular weight, centred, at most three lines, and ONE white line diagram
+     underneath. No photo, no gradient, no icon set, no logo wall. -->
+
+<!-- landscape 1200x627: link previews, article heroes -->
+<div class="gm-viewport gm-cover gm-cover--landscape" id="landscape">
+  <p class="gm-viewport__title">Move-in automation,<br>step by step</p>
+  <div class="gm-row" style="gap:20px;font-size:20px;line-height:28px">
+    <div class="gm-glass" style="padding:18px 30px;border-radius:8px;border-width:2px">Billing</div>
+    <span>↔</span>
+    <div class="gm-glass" style="padding:18px 22px;border-radius:12px;border-width:2px;display:grid;gap:10px;justify-items:center">
+      <span class="gm-wordmark" style="font-size:20px"><span class="gm-wordmark__mark" style="width:14px;height:14px;background:#fff"></span>Northdesk</span>
+      <span class="gm-row" style="gap:8px"><span class="gm-glass__label">read</span><span class="gm-glass__label">check</span><span class="gm-glass__label">book</span></span>
+    </div>
+    <span>↔</span>
+    <div style="display:grid;gap:10px"><div class="gm-glass" style="padding:8px 24px;border-radius:8px;border-width:2px;font-size:16px">Customers</div><div class="gm-glass" style="padding:8px 24px;border-radius:8px;border-width:2px;font-size:16px">Clerks</div><div class="gm-glass" style="padding:8px 24px;border-radius:8px;border-width:2px;font-size:16px">Grid operator</div></div>
+  </div>
+</div>
+</body>
+</html>

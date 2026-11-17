@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northdesk | Reading Desk</title>
+<link rel="stylesheet" href="../gm.css">
+</head>
+<body>
+<!-- PRODUCT DENSITY: Geist 12px, slate neutrals, 6px controls, one blue primary action.
+     Colour appears only in status badges and the primary action. -->
+<div class="gm-app">
+  <aside class="gm-app__side">
+    <div class="gm-app__brand"><span class="gm-wordmark__mark" style="width:20px;height:20px;border-radius:4px"></span>Northdesk</div>
+
+    <div class="gm-app__group"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l2.5-7.5h13L21 13v5.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 13h5l1.5 2.5h5L16 13h5"/></svg>Customer Service</div>
+    <a class="gm-app__item is-off">Move-ins</a>
+    <a class="gm-app__item is-active">Meter Readings</a>
+    <a class="gm-app__item">Billing Corrections</a>
+    <a class="gm-app__item">Supplier Switches</a>
+
+    <div class="gm-app__group"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Settlement</div>
+    <a class="gm-app__item">Grid Invoices</a>
+    <a class="gm-app__item">Reconciliation</a>
+    <a class="gm-app__item is-off">Claims</a>
+
+    <div class="gm-app__group"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20V10M12 20V4M18 20v-7"/></svg>Command Centre</div>
+    <a class="gm-app__item">Open Actions</a>
+    <a class="gm-app__item">Emails</a>
+    <a class="gm-app__item is-off">KPIs</a>
+
+    <div class="gm-app__user"><span class="gm-app__avatar">MK</span><div>Mara Keller<small>Clerk · Stage 1 approver</small></div></div>
+  </aside>
+
+  <div class="gm-app__main">
+    <header class="gm-app__bar">
+      <h1>AI Meter Readings</h1>
+      <div class="gm-app__tools">
+        <button class="gm-app__ctl">Region North <span style="color:var(--app-text-3)">2310</span></button>
+        <button class="gm-app__ctl">EN</button>
+        <button class="gm-app__ctl">Start tour</button>
+      </div>
+    </header>
+
+    <div class="gm-app__body">
+      <div class="gm-app__tools" style="justify-content:space-between">
+        <nav class="gm-app__tabs" style="flex:1">
+          <a class="is-active">All Customers <span class="gm-app__count">4</span></a>
+          <a>Open Readings <span class="gm-app__count">6</span></a>
+          <a>Emails <span class="gm-app__count">56</span></a>
+        </nav>
+      </div>
+
+      <div class="gm-app__tools">
+        <div class="gm-app__kpis" style="flex:1">
+          <div class="gm-app__kpi"><b>412</b><span>Readings this week</span></div>
+          <div class="gm-app__kpi"><b>389</b><span>Booked without edits</span></div>
+          <div class="gm-app__kpi"><b>23</b><span>Pending review</span></div>
+          <div class="gm-app__kpi"><b>0</b><span>Failed</span></div>
+        </div>
+        <span class="gm-row" style="gap:8px;color:var(--app-text-2)"><svg class="gm-spark" style="width:14px;height:14px" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5C12.7 8 14.5 9.8 21.5 12 14.5 14.2 12.7 16 12 21.5 11.3 16 9.5 14.2 2.5 12 9.5 9.8 11.3 8 12 2.5z"/></svg>AutoPilot</span>
+        <button class="gm-app__ctl gm-app__ctl--primary">+ New Reading</button>
+      </div>
+
+      <div class="gm-app__tools">
+        <span class="gm-app__ctl gm-app__ctl--search">Search by customer, meter, reference</span>
+        <button class="gm-app__ctl">Channel</button>
+        <button class="gm-app__ctl">Status · 2</button>
+        <button class="gm-app__ctl">More Filters</button>
+      </div>
+
+      <div class="gm-app__tablewrap">
+        <table>
+          <thead><tr><th>Customer</th><th>Type</th><th>Latest inbound</th><th>Received</th><th>Status</th><th class="gm-app__num">Reading</th><th class="gm-app__num">Confidence</th><th>Next action</th></tr></thead>
+          <tbody>
+            <tr><td><b>Bäckerei Lindner</b><small>LINDNER-01 · </small><small style="color:var(--gm-amber-deep)">Open items</small></td><td><span class="gm-app__badge">Commercial</span></td><td>Re: Zählerstand Oktober<br><span class="gm-app__chan">Email</span></td><td>15 Sept 2026 14:30</td><td><span class="gm-app__badge gm-app__badge--green">Booked</span></td><td class="gm-app__num">48 210 kWh</td><td class="gm-app__num">98%</td><td><button class="gm-app__ctl">View reading</button></td></tr>
+            <tr><td><b>Hausverwaltung Okafor</b><small>OKAFOR-07</small></td><td><span class="gm-app__badge gm-app__badge--green">Residential</span></td><td>Photo upload, 3 meters<br><span class="gm-app__chan">Portal</span></td><td>15 Sept 2026 13:52</td><td><span class="gm-app__badge gm-app__badge--amber">Needs review</span></td><td class="gm-app__num">12 904 kWh</td><td class="gm-app__num">71%</td><td><button class="gm-app__ctl">Review</button></td></tr>
+            <tr><td><b>Praxis Dr. Yilmaz</b><small>YILMAZ-02</small></td><td><span class="gm-app__badge">Commercial</span></td><td>Move-out reading attached<br><span class="gm-app__chan">Email</span></td><td>15 Sept 2026 11:08</td><td><span class="gm-app__badge gm-app__badge--green">Booked</span></td><td class="gm-app__num">7 332 kWh</td><td class="gm-app__num">96%</td><td><button class="gm-app__ctl">View reading</button></td></tr>
+            <tr><td><b>Werkstatt Brandt GmbH</b><small>BRANDT-11</small></td><td><span class="gm-app__badge gm-app__badge--quiet">Industrial</span></td><td>Reading differs from history<br><span class="gm-app__chan">EDI</span></td><td>15 Sept 2026 09:41</td><td><span class="gm-app__badge gm-app__badge--red">Blocked</span></td><td class="gm-app__num">191 660 kWh</td><td class="gm-app__num">42%</td><td><button class="gm-app__ctl">Open case</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="gm-app__cols">
+        <!-- CHART: thin ink line, dot markers, one green annotation chip, hairline grid, tiny grey axes -->
+        <section class="gm-app__panel">
+          <h2>Autopilot confidence</h2>
+          <svg viewBox="0 0 520 190" role="img" aria-label="Autopilot confidence rising from 62% in week 0 to 93% in week 6">
+            <g stroke="#e2e8f0" stroke-width="1"><path d="M40 20h470M40 60h470M40 100h470M40 140h470"/></g>
+            <g font-size="10" fill="#a1a1a1" font-family="Geist, sans-serif"><text x="8" y="24">100%</text><text x="12" y="64">80%</text><text x="12" y="104">60%</text><text x="12" y="144">40%</text>
+              <text x="52" y="170">W0</text><text x="128" y="170">W1</text><text x="204" y="170">W2</text><text x="280" y="170">W3</text><text x="356" y="170">W4</text><text x="432" y="170">W5</text><text x="492" y="170">W6</text></g>
+            <path d="M60 96 C120 78, 170 62, 212 54 S330 40, 364 37 S460 35, 500 34" fill="none" stroke="#262626" stroke-width="1.5"/>
+            <g fill="#262626"><circle cx="60" cy="96" r="3"/><circle cx="212" cy="54" r="3"/><circle cx="364" cy="37" r="3"/><circle cx="500" cy="34" r="3"/></g>
+            <g><rect x="186" y="66" width="52" height="22" rx="6" fill="#dcfce7"/><text x="212" y="81" text-anchor="middle" font-size="12" font-weight="500" fill="#16a34a" font-family="Geist, sans-serif">85%</text></g>
+          </svg>
+        </section>
+        <section class="gm-app__panel">
+          <h2>Why Autopilot held these back</h2>
+          <div style="display:grid;gap:10px;font-weight:400;color:var(--app-text-2)">
+            <div class="gm-row" style="gap:8px"><span style="width:150px">Reading below last year</span><div class="gm-bar gm-bar--ink" style="flex:1"><i style="width:64%"></i></div><b style="width:24px;text-align:right;color:var(--app-text)">11</b></div>
+            <div class="gm-row" style="gap:8px"><span style="width:150px">Meter number unreadable</span><div class="gm-bar gm-bar--ink" style="flex:1"><i style="width:36%"></i></div><b style="width:24px;text-align:right;color:var(--app-text)">6</b></div>
+            <div class="gm-row" style="gap:8px"><span style="width:150px">Address not in register</span><div class="gm-bar gm-bar--ink" style="flex:1"><i style="width:24%"></i></div><b style="width:24px;text-align:right;color:var(--app-text)">4</b></div>
+            <div class="gm-row" style="gap:8px"><span style="width:150px">Two readings, one meter</span><div class="gm-bar gm-bar--ink" style="flex:1"><i style="width:12%"></i></div><b style="width:24px;text-align:right;color:var(--app-text)">2</b></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="gm-app__foot"><span>Rows per page <button class="gm-app__ctl" style="margin-left:8px">25</button></span><span class="gm-row" style="gap:8px">Previous <button class="gm-app__ctl">1</button> Next</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "skill_name": "generalmind-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build me a dashboard for our inbound logistics team at a furniture retailer. They track shipments from about 40 suppliers: ETA, carrier, status (on time, delayed, at customs, delivered), which ones need someone to chase the supplier, plus a few KPIs for this week and a small chart of on-time rate over the last 8 weeks. Make it in the GeneralMind style. The company is called Holm & Ek.",
+      "expected_output": "A single self-contained HTML dashboard in product density: Geist 12px, slate neutrals, sidebar, top bar, tabs with counts, compact KPI cards, a table with tinted status badges, one blue primary action, a thin ink line chart with one green annotation chip. Passes scripts/gm_lint.py.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "I have a call with Brenner Maschinenbau tomorrow. Quick customer POV I can send afterwards, one page, GeneralMind look. What I know: they make packaging machines, about 1,400 employees, SAP S/4HANA. Their purchasing team of 9 handles roughly 3,200 supplier order confirmations a month by hand, mostly PDFs by email. About a quarter have a changed delivery date or price and get noticed late. They want fewer late deliveries to the assembly line. We'd propose a free pilot on order confirmations. I'm at a company called Tallgrass (we do AI automation for procurement).",
+      "expected_output": "One A4 page: wordmark and 'point of view' line, outcome title with a time frame, meta strip of the customer's facts, what we see / what it costs, three dated steps, outcome numbers on a steel viewport band, positive callout with the free pilot, footer stating which numbers are estimates. Regular-weight headlines, no invented facts presented as real. Passes scripts/gm_lint.py.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "We just finished a pilot with a regional hospital group (Klinikverbund Saale, 6 hospitals): our AI now handles incoming supplier invoices for medical consumables. 2,300 invoices a month, 78% matched to the order and goods receipt without anyone touching them after 5 weeks, the accounts payable team of 4 no longer works weekends at month-end. I need two things in the GeneralMind style: (1) a LinkedIn post with its square image, and (2) a short 5-slide deck I can show their CFO next week to propose rolling it out to the remaining hospitals. My company is called Tallgrass.",
+      "expected_output": "A post in the house voice (plain first line, one number with unit and period, an honest limit, quiet next step, no emoji or exclamation marks), a 1200x1200 cover on the steel viewport with a white regular-weight title and one white line diagram, and a 5-slide 1280x720 deck with claim headlines, one idea per slide, white and mist slides and a night closing slide. All pass scripts/gm_lint.py.",
+      "files": []
+    }
+  ]
+}
